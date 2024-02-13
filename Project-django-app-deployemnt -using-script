@@ -1,0 +1,53 @@
+<<comment
+This is django-deployment notes app!!
+comment
+
+code_clone() {
+
+        echo "The code is clone from Github"
+        git clone https://github.com/LondheShubham153/django-notes-app.git
+}
+
+installation() {
+
+        sudo apt update -y
+        sudo apt-get install docker.io nginx docker-compose -y
+
+}
+
+required_dependences() {
+
+        sudo systemctl enable docker.io
+        sudo systemctl enable nginx
+        sudo chown ubuntu /var/run/docker.sock
+
+}
+
+deploy() {
+        docker build . -t django-app
+        #docker run -d -p 8000:8000 django-app
+        docker-compose up -d --no-deps --build web
+
+}
+
+echo "************************* Deployement Start***********************************"
+if ! code_clone;then
+        cd django-notes-app
+
+fi
+
+if ! installation;then
+        echo "installation error"
+        exit 1
+fi
+
+if ! required_dependences;then
+        echo "permission error"
+        exit 1
+fi
+
+if ! deploy;then
+        echo "Deployment failed mail send!"
+        exit 1
+fi
+echo "************************* Deployement Done************************************"
